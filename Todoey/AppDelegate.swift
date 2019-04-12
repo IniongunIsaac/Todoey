@@ -16,6 +16,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        
+        //get this app's document directory
+        let documentDir = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).last! as String
+        print(documentDir)
+        
         return true
     }
 

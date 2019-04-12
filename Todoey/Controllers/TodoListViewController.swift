@@ -10,15 +10,19 @@ import UIKit
 
 class TodoListViewController: UITableViewController {
     
-    var itemArray = ["Item 1", "Item 2", "Item 3"]
+    var itemArray = [Item]()
     
     var defaults = UserDefaults.standard
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        for i: Int in 1...10{
+            itemArray.append(Item(title: "Item \(i)"))
+        }
+        
         //grab the saved TodoListArray from userDefaults
-        if let items = defaults.array(forKey: "TodoListArray") as? [String] {
+        if let items = defaults.array(forKey: "TodoListArray") as? [Item] {
             itemArray = items
         }
     }
@@ -26,7 +30,12 @@ class TodoListViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "TodoItemCell", for: indexPath) as UITableViewCell
         
-        cell.textLabel?.text = itemArray[indexPath.row]
+        let item = itemArray[indexPath.row]
+        
+        cell.textLabel?.text = item.title
+        
+        //toggle checkmark accessory to the right end of the selected row upon selection and de-selection
+        cell.accessoryType = item.done ? .checkmark : .none
         
         return cell
     }
@@ -37,12 +46,9 @@ class TodoListViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        //toggle checkmark accessory to the right end of the selected row upon selection and de-selection
-        if tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark{
-            tableView.cellForRow(at: indexPath)?.accessoryType = .none
-        } else {
-            tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
-        }
+        itemArray[indexPath.row].done = !itemArray[indexPath.row].done
+        
+        tableView.reloadData()
         
         //remove grey background from table view cell upon selection using an animation
         tableView.deselectRow(at: indexPath, animated: true)
@@ -58,7 +64,7 @@ class TodoListViewController: UITableViewController {
         
         let action = UIAlertAction(title: "Add Item", style: .default) { (action) in
             //What will happen when the user clicks the Add Item button on our UiAlert
-            self.itemArray.append(textField.text!)
+            self.itemArray.append(Item(title: textField.text!))
             
             //save itemArray in user defaults
             self.defaults.set(self.itemArray, forKey: "TodoListArray")
