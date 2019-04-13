@@ -18,8 +18,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
         
         //get this app's document directory
-        let documentDir = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).last! as String
-        print(documentDir)
+//        let documentDir = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).last! as String
+//        print(documentDir)
         
         return true
     }

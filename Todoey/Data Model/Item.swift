@@ -8,8 +8,9 @@
 
 import Foundation
 
-
-class Item{
+//Data class Item extends Codable. For a class to be Codable i.e Encodable and Decodable, all its properties must have standard data types.
+//An class that extends Codable i.e Encodable and Decodable protocols cannot have properties with custom data types.
+class Item: Codable {
     var title: String = ""
     var done: Bool = false
     
