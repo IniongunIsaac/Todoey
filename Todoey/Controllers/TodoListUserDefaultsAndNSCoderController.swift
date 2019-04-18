@@ -8,7 +8,7 @@
 
 import UIKit
 
-class TodoListController2: UITableViewController {
+class TodoListUserDefaultsAndNSCoderController: UITableViewController {
     
     var itemArray = [ItemModel]()
     
@@ -104,14 +104,14 @@ class TodoListController2: UITableViewController {
     }
     
     func loadItems(){
-        if let data = try? Data(contentsOf: dataFilePath!){
-            let decoder = PropertyListDecoder()
-            do {
-                itemArray = try decoder.decode([ItemModel].self, from: data)
-            } catch {
-                print("Error decoding Item Array: \(error)")
-            }
-        }
+//        if let data = try? Data(contentsOf: dataFilePath!){
+//            let decoder = PropertyListDecoder()
+//            do {
+//                itemArray = try decoder.decode([ItemModel].self, from: data)
+//            } catch {
+//                print("Error decoding Item Array: \(error)")
+//            }
+//        }
     }
     
 }

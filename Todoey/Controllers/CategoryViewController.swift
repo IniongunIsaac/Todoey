@@ -7,13 +7,13 @@
 //
 
 import UIKit
-import CoreData
+import RealmSwift
 
-class CategoryViewController: UITableViewController {
+class CategoryViewController: SwipeTableViewController {
     
-    var categories = [Category]()
+    let realm = try! Realm()
     
-    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    var categories: Results<CategoryData>?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,19 +26,16 @@ class CategoryViewController: UITableViewController {
     //MARK: - TableView Datasource Methods
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath) as UITableViewCell
         
-        //Enable mutiline cells with linebreak
-        cell.textLabel?.numberOfLines = 0
-        cell.textLabel?.lineBreakMode = NSLineBreakMode.byWordWrapping
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
         
-        cell.textLabel?.text = categories[indexPath.row].name
+        cell.textLabel?.text = categories?[indexPath.row].name ?? "No Categories Added Yet."
         
         return cell
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return categories.count
+        return categories?.count ?? 1
     }
     
     //MARK: - TableView Delegate Methods
@@ -51,16 +48,18 @@ class CategoryViewController: UITableViewController {
         let destinationVC = segue.destination as! TodoListViewController
         
         if let indexPath = tableView.indexPathForSelectedRow {
-            destinationVC.selectedCategory = categories[indexPath.row]
+            destinationVC.selectedCategory = categories?[indexPath.row]
         }
     }
     
     //MARK: - Data Manipulation Methods
     
-    func saveCategories(){
+    func saveCategory(category: CategoryData){
         
         do {
-            try context.save()
+            try realm.write {
+                realm.add(category)
+            }
         } catch {
             print("Error saving category: \(error)")
         }
@@ -69,16 +68,27 @@ class CategoryViewController: UITableViewController {
         
     }
     
-    func loadCategories(with request: NSFetchRequest<Category> = Category.fetchRequest()) {
+    func loadCategories() {
         
-        do {
-            categories = try context.fetch(request)
-        } catch {
-            print("Error fetching categories: \(error)")
-        }
+        categories = realm.objects(CategoryData.self).sorted(byKeyPath: "name", ascending: true)
         
         tableView.reloadData()
         
+    }
+    
+    //Delete data from swipe
+    
+    override func updateModel(at indexPath: IndexPath) {
+        
+        if let category = self.categories?[indexPath.row] {
+            do {
+                try self.realm.write {
+                    self.realm.delete(category)
+                }
+            } catch {
+                print("Error deleting category: \(error)")
+            }
+        }
     }
 
     //MARK: - Add New Categories
@@ -92,11 +102,11 @@ class CategoryViewController: UITableViewController {
         //Add an Action to the alert
         let action = UIAlertAction(title: "Add Category", style: .default) { (alertAction) in
             
-            let newCategory = Category(context: self.context)
+            let newCategory = CategoryData()
             newCategory.name = textField.text!
-            self.categories.append(newCategory)
+            //self.categories.append(newCategory)
             
-            self.saveCategories()
+            self.saveCategory(category: newCategory)
             
         }
         
@@ -121,19 +131,10 @@ extension CategoryViewController: UISearchBarDelegate{
     //When the search bar's search button is pressed
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         
-        let request: NSFetchRequest<Category> = Category.fetchRequest()
-    
-        let predicate = NSPredicate(format: "name CONTAINS[cd] %@", searchBar.text!)
+        categories = categories?.filter("name CONTAINS[cd] %@", searchBar.text!)
         
-        //Add predicate to request
-        request.predicate = predicate
+        tableView.reloadData()
         
-        //Create a Descriptor(SORT) for organizing data
-        let sortDescriptor = NSSortDescriptor(key: "name", ascending: true)
-        
-        request.sortDescriptors = [sortDescriptor]
-        
-        loadCategories(with: request)
     }
     
     //When the search bar's text changes
@@ -149,4 +150,40 @@ extension CategoryViewController: UISearchBarDelegate{
             }
         }
     }
+    
 }
+
+//extension CategoryViewController: SwipeTableViewCellDelegate {
+//    
+//    func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
+//        guard orientation == .right else { return nil }
+//        
+//        let deleteAction = SwipeAction(style: .destructive, title: "Delete") { action, indexPath in
+//            // handle swipe action here
+//            if let category = self.categories?[indexPath.row] {
+//                do {
+//                    try self.realm.write {
+//                        self.realm.delete(category)
+//                    }
+//                } catch {
+//                    print("Error deleting category: \(error)")
+//                }
+//                
+//                //tableView.reloadData()
+//            }
+//        }
+//        
+//        // customize the action appearance
+//        deleteAction.image = UIImage(named: "delete-icon")
+//        
+//        return [deleteAction]
+//    }
+//    
+//    func tableView(_ tableView: UITableView, editActionsOptionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> SwipeOptions {
+//        var options = SwipeOptions()
+//        options.expansionStyle = .destructive
+//        //options.transitionStyle = .border
+//        return options
+//    }
+//    
+//}
