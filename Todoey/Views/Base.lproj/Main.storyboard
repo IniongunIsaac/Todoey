@@ -89,12 +89,14 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="Items" id="ZDl-Lm-bUS">
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="GYD-kV-ITP">
-                            <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <connections>
                                 <action selector="addButtonPressed:" destination="Q9L-n5-dhF" id="y1E-vO-sxI"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <connections>
+                        <outlet property="searchBar" destination="h8F-oA-cuI" id="ibT-gR-o5i"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="bJ6-f7-nG2" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -105,10 +107,16 @@
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="4gQ-hO-40g" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="Zlb-sO-IQs">
-                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" largeTitles="YES" id="Zlb-sO-IQs">
+                        <rect key="frame" x="0.0" y="44" width="414" height="96"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <color key="barTintColor" red="0.259497745" green="0.71699445409999996" blue="0.98136104059999996" alpha="0.84705882349999995" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="barTintColor" red="0.25882352941176467" green="0.71764705882352942" blue="0.98039215686274506" alpha="0.84705882349999995" colorSpace="custom" customColorSpace="sRGB"/>
+                        <textAttributes key="titleTextAttributes">
+                            <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        </textAttributes>
+                        <textAttributes key="largeTitleTextAttributes">
+                            <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        </textAttributes>
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>

@@ -11,6 +11,7 @@ import RealmSwift
 
 class CategoryData: Object {
     @objc dynamic var name : String = ""
+    @objc dynamic var color : String = ""
     //Define a has-Many Relationship to the ItemData class
     let items = List<ItemData>()
 }
